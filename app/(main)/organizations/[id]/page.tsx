@@ -1,6 +1,5 @@
-import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { getOrgById, getReviewsByOrgId } from '@/lib/store'
+import { fetchOrganizationById } from '@/services/organizations/api'
 import OrgDetailView from '@/components/org-detail-view'
 
 interface Props {
@@ -9,18 +8,18 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
-  const org = getOrgById(id)
-  if (!org) return {}
-  return {
-    title: `${org.name} Reviews — Lament`,
-    description: `Anonymous employee reviews for ${org.name}. Read honest opinions about culture, pay, and management.`,
+  try {
+    const org = await fetchOrganizationById(id)
+    return {
+      title: `${org.name} Reviews — Lament`,
+      description: `Anonymous employee reviews for ${org.name}. Read honest opinions about culture, pay, and management.`,
+    }
+  } catch {
+    return {}
   }
 }
 
 export default async function OrgDetailPage({ params }: Props) {
   const { id } = await params
-  const org = getOrgById(id)
-  if (!org) notFound()
-  const reviews = getReviewsByOrgId(id)
-  return <OrgDetailView org={org} reviews={reviews} />
+  return <OrgDetailView id={id} />
 }

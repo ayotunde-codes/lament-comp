@@ -1,15 +1,24 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import type { Review } from '@/types'
+import { useReviewsFeed } from '@/services/reviews/queries'
+import { useOrganizations } from '@/services/organizations/queries'
 import ReviewCard from './review-card'
 import { useCardReveal } from '@/hooks/use-card-reveal'
+import type { ListReviewsParams } from '@/services/reviews/types'
 
 type Tab = 'all' | 'trending' | 'latest'
 
-interface HomeFeedProps {
-  reviews: Review[]
-  orgNameMap: Record<string, string>
+const TABS: { id: Tab; label: string }[] = [
+  { id: 'all', label: 'All' },
+  { id: 'trending', label: 'Trending' },
+  { id: 'latest', label: 'Latest' },
+]
+
+const SORT_MAP: Record<Tab, ListReviewsParams['sort']> = {
+  all: undefined,
+  trending: 'top',
+  latest: 'latest',
 }
 
 const FilterIcon = () => (
@@ -21,20 +30,18 @@ const FilterIcon = () => (
   </svg>
 )
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'all', label: 'All' },
-  { id: 'trending', label: 'Trending' },
-  { id: 'latest', label: 'Latest' },
-]
-
-export default function HomeFeed({ reviews, orgNameMap }: HomeFeedProps) {
+export default function HomeFeed() {
   const [activeTab, setActiveTab] = useState<Tab>('all')
   const listRef = useCardReveal<HTMLUListElement>(activeTab)
 
-  const sorted = useMemo(() => {
-    if (activeTab === 'trending') return [...reviews].sort((a, b) => b.likes - a.likes)
-    return reviews
-  }, [reviews, activeTab])
+  const feedQuery = useReviewsFeed({ sort: SORT_MAP[activeTab] })
+  const orgsQuery = useOrganizations({ limit: 100 })
+
+  const reviews = feedQuery.data?.pages.flatMap(p => p.data) ?? []
+  const orgNameMap = useMemo(
+    () => Object.fromEntries((orgsQuery.data?.data ?? []).map(o => [o.id, o.name])),
+    [orgsQuery.data]
+  )
 
   return (
     <section aria-label="Review feed">
@@ -45,9 +52,7 @@ export default function HomeFeed({ reviews, orgNameMap }: HomeFeedProps) {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                activeTab === tab.id
-                  ? 'bg-accent text-white'
-                  : 'text-muted hover:text-primary'
+                activeTab === tab.id ? 'bg-accent text-white' : 'text-muted hover:text-primary'
               }`}
               aria-pressed={activeTab === tab.id}
             >
@@ -55,28 +60,44 @@ export default function HomeFeed({ reviews, orgNameMap }: HomeFeedProps) {
             </button>
           ))}
         </div>
-        <button
-          className="p-2 text-muted hover:text-primary transition-colors"
-          aria-label="Filter options"
-        >
+        <button className="p-2 text-muted hover:text-primary transition-colors" aria-label="Filter options">
           <FilterIcon />
         </button>
       </div>
 
-      {sorted.length === 0 ? (
+      {feedQuery.isLoading ? (
+        <div className="flex justify-center py-20">
+          <span className="text-muted text-sm">Loading…</span>
+        </div>
+      ) : feedQuery.isError ? (
+        <div className="flex justify-center py-20">
+          <span className="text-muted text-sm">Failed to load reviews.</span>
+        </div>
+      ) : reviews.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <p className="text-4xl mb-3">💬</p>
           <p className="text-base font-medium text-primary">No reviews yet</p>
           <p className="text-sm text-muted mt-1">Be the first to share your experience</p>
         </div>
       ) : (
-        <ul ref={listRef} className="space-y-3">
-          {sorted.map(review => (
-            <li key={review.id} data-card>
-              <ReviewCard review={review} orgName={orgNameMap[review.orgId] ?? 'Unknown'} />
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul ref={listRef} className="space-y-3">
+            {reviews.map(review => (
+              <li key={review.id} data-card>
+                <ReviewCard review={review} orgName={orgNameMap[review.orgId] ?? 'Unknown'} />
+              </li>
+            ))}
+          </ul>
+          {feedQuery.hasNextPage && (
+            <button
+              onClick={() => feedQuery.fetchNextPage()}
+              disabled={feedQuery.isFetchingNextPage}
+              className="w-full mt-4 py-3 text-sm text-muted hover:text-primary transition-colors disabled:opacity-40"
+            >
+              {feedQuery.isFetchingNextPage ? 'Loading…' : 'Load more'}
+            </button>
+          )}
+        </>
       )}
     </section>
   )

@@ -5,6 +5,7 @@ import type { Review } from '@/types'
 import StarRating from './star-rating'
 import Avatar from './avatar'
 import { formatTimeAgo } from '@/lib/format-time'
+import { useReactToReview, useUndoReaction } from '@/services/reactions/queries'
 
 interface ReviewCardProps {
   review: Review
@@ -41,23 +42,29 @@ const BookmarkIcon = () => (
 )
 
 export default function ReviewCard({ review, orgName, hideOrgName = false }: ReviewCardProps) {
-  const [likes, setLikes] = useState(review.likes)
-  const [dislikes, setDislikes] = useState(review.dislikes)
   const [voted, setVoted] = useState<'like' | 'dislike' | null>(null)
   const [expanded, setExpanded] = useState(false)
+  const { mutate: reactTo } = useReactToReview()
+  const { mutate: undoReact } = useUndoReaction()
 
   function handleLike() {
-    if (voted === 'like') { setLikes(l => l - 1); setVoted(null); return }
-    if (voted === 'dislike') setDislikes(d => d - 1)
-    setLikes(l => l + 1)
-    setVoted('like')
+    if (voted === 'like') {
+      undoReact({ reviewId: review.id, type: 'LIKE' })
+      setVoted(null)
+    } else {
+      reactTo({ reviewId: review.id, type: 'LIKE' })
+      setVoted('like')
+    }
   }
 
   function handleDislike() {
-    if (voted === 'dislike') { setDislikes(d => d - 1); setVoted(null); return }
-    if (voted === 'like') setLikes(l => l - 1)
-    setDislikes(d => d + 1)
-    setVoted('dislike')
+    if (voted === 'dislike') {
+      undoReact({ reviewId: review.id, type: 'DISLIKE' })
+      setVoted(null)
+    } else {
+      reactTo({ reviewId: review.id, type: 'DISLIKE' })
+      setVoted('dislike')
+    }
   }
 
   return (
@@ -108,14 +115,14 @@ export default function ReviewCard({ review, orgName, hideOrgName = false }: Rev
           className={`flex items-center gap-1.5 text-xs font-medium transition-colors ${voted === 'like' ? 'text-positive' : 'text-muted hover:text-positive'}`}
           aria-label="Like this review"
         >
-          <ThumbUp />{likes}
+          <ThumbUp />{review.likes}
         </button>
         <button
           onClick={handleDislike}
           className={`flex items-center gap-1.5 text-xs font-medium transition-colors ${voted === 'dislike' ? 'text-danger' : 'text-muted hover:text-danger'}`}
           aria-label="Dislike this review"
         >
-          <ThumbDown />{dislikes}
+          <ThumbDown />{review.dislikes}
         </button>
         <div className="flex items-center gap-3 ml-auto">
           <button className="text-muted hover:text-primary transition-colors" aria-label="Share review">

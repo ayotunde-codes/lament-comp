@@ -1,5 +1,6 @@
 'use client'
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { useUploadVoiceNote } from '@/services/voice/queries'
 
 const WAVEFORM_HEIGHTS = [8, 14, 20, 16, 26, 18, 12, 8, 18, 24, 16, 28, 20, 12, 8, 20, 26, 14, 10, 8]
 
@@ -18,6 +19,7 @@ export default function VoiceRecorder({ voiceUrl, onRecorded }: Props) {
   const mediaRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const { mutate: uploadVoice, isPending: isUploading } = useUploadVoiceNote()
 
   const start = useCallback(async () => {
     try {
@@ -27,8 +29,8 @@ export default function VoiceRecorder({ voiceUrl, onRecorded }: Props) {
       mr.ondataavailable = e => chunksRef.current.push(e.data)
       mr.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: 'audio/webm' })
-        onRecorded(URL.createObjectURL(blob))
         stream.getTracks().forEach(t => t.stop())
+        uploadVoice(blob, { onSuccess: ({ url }) => onRecorded(url) })
       }
       mr.start()
       mediaRef.current = mr
@@ -38,7 +40,7 @@ export default function VoiceRecorder({ voiceUrl, onRecorded }: Props) {
     } catch {
       // microphone permission denied
     }
-  }, [onRecorded])
+  }, [onRecorded, uploadVoice])
 
   const stop = useCallback(() => {
     mediaRef.current?.stop()
@@ -47,6 +49,14 @@ export default function VoiceRecorder({ voiceUrl, onRecorded }: Props) {
   }, [])
 
   useEffect(() => () => { if (timerRef.current) clearInterval(timerRef.current) }, [])
+
+  if (isUploading) {
+    return (
+      <div className="flex items-center gap-3 bg-elevated border border-border rounded-xl px-4 py-3">
+        <span className="text-sm text-muted">Uploading voice note…</span>
+      </div>
+    )
+  }
 
   if (voiceUrl) {
     return (

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { getLatestReviews, getAllOrganizations } from '@/lib/store'
 import HomeFeed from '@/components/home-feed'
 
 export const metadata: Metadata = {
@@ -8,9 +7,5 @@ export const metadata: Metadata = {
 }
 
 export default function HomePage() {
-  const reviews = getLatestReviews()
-  const orgs = getAllOrganizations()
-  const orgNameMap = Object.fromEntries(orgs.map(o => [o.id, o.name]))
-
-  return <HomeFeed reviews={reviews} orgNameMap={orgNameMap} />
+  return <HomeFeed />
 }

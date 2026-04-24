@@ -1,7 +1,31 @@
 {
   "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(npx playwright *)",
+      "Bash(npm run *)",
+      "Bash(echo \"Server starting with PID $!\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/organizations)",
+      "Read(//tmp/**)",
+      "Read(//private/tmp/**)",
+      "Bash(echo \"PID: $!\")",
+      "Bash(node -e ' *)",
+      "Bash(curl -s http://localhost:3000/)",
+      "Bash(npm list *)",
+      "Read(//Users/ayo/.npm/_npx/e41f203b7505f1fb/node_modules/**)",
+      "Bash('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' --headless=new --screenshot=/tmp/review-step1-chrome.png --window-size=390,844 --disable-extensions --no-sandbox http://localhost:3000/review)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('main:', d.get\\('main',''\\), 'module:', d.get\\('module',''\\), 'types:', d.get\\('types',''\\), 'exports:', json.dumps\\(d.get\\('exports', {}\\), indent=2\\)\\)\")",
+      "Bash(npx -y @playwright/test screenshot \"http://localhost:3000/review\" /tmp/screenshot-review-step1.png --viewport-size \"390,844\")",
+      "Bash(nest --version)",
+      "Bash(npm --version)",
+      "Bash(xargs kill *)",
+      "Bash(npm install *)"
+    ],
     "additionalDirectories": [
-      "/Users/ayo/project/lament-now/.claude"
+      "/Users/ayo/project/lament-now/.claude",
+      "/Users/ayo/project/lament-now",
+      "/Users/ayo/project/lament-now/app/(main)/organizations",
+      "/Users/ayo/project/lament-api"
     ]
   }
 }

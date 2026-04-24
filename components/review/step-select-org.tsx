@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { getAllOrganizations, addOrganization } from '@/lib/store'
+import { useOrganizations, useCreateOrganization } from '@/services/organizations/queries'
 import { Industry } from '@/types'
 import type { ReviewFormData } from '@/hooks/use-review-flow'
 
@@ -16,18 +16,23 @@ export default function StepSelectOrg({ formData, setField, onNext }: Props) {
   const [newName, setNewName] = useState('')
   const [newIndustry, setNewIndustry] = useState<Industry>(Industry.Tech)
 
-  const orgs = getAllOrganizations().filter(o =>
-    o.name.toLowerCase().includes(query.toLowerCase())
-  )
+  const { data } = useOrganizations({ search: query || undefined })
+  const createOrg = useCreateOrganization()
+  const orgs = data?.data ?? []
 
   function handleAddOrg() {
     if (!newName.trim()) return
-    const id = crypto.randomUUID()
-    addOrganization({ id, name: newName.trim(), logo: '🏢', industry: newIndustry, averageRating: 0, reviewCount: 0 })
-    setField('orgId', id)
-    setField('orgName', newName.trim())
-    setShowAdd(false)
-    setNewName('')
+    createOrg.mutate(
+      { name: newName.trim(), industry: newIndustry, logo: '🏢' },
+      {
+        onSuccess: (org) => {
+          setField('orgId', org.id)
+          setField('orgName', org.name)
+          setShowAdd(false)
+          setNewName('')
+        },
+      }
+    )
   }
 
   return (
@@ -85,7 +90,13 @@ export default function StepSelectOrg({ formData, setField, onNext }: Props) {
             {Object.values(Industry).map(i => <option key={i} value={i}>{i}</option>)}
           </select>
           <div className="flex gap-2">
-            <button onClick={handleAddOrg} className="flex-1 bg-accent text-white text-sm py-2 rounded-lg font-medium hover:bg-accent-hover transition-colors">Add</button>
+            <button
+              onClick={handleAddOrg}
+              disabled={createOrg.isPending}
+              className="flex-1 bg-accent text-white text-sm py-2 rounded-lg font-medium hover:bg-accent-hover transition-colors disabled:opacity-40"
+            >
+              {createOrg.isPending ? 'Adding…' : 'Add'}
+            </button>
             <button onClick={() => setShowAdd(false)} className="flex-1 border border-border text-muted text-sm py-2 rounded-lg hover:text-primary transition-colors">Cancel</button>
           </div>
         </div>

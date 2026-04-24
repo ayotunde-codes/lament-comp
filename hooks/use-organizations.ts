@@ -1,22 +1,25 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { getAllOrganizations } from '@/lib/store'
+import { useState } from 'react'
+import { useOrganizations as useOrgsQuery } from '@/services/organizations/queries'
 import type { Industry } from '@/types'
 
 export function useOrganizations() {
   const [query, setQuery] = useState('')
   const [activeIndustry, setActiveIndustry] = useState<Industry | 'All'>('All')
 
-  const organizations = useMemo(() => getAllOrganizations(), [])
+  const { data, isLoading, isError } = useOrgsQuery({
+    search: query || undefined,
+    industry: activeIndustry === 'All' ? undefined : activeIndustry,
+  })
 
-  const filtered = useMemo(() => {
-    return organizations.filter(org => {
-      const matchesQuery = org.name.toLowerCase().includes(query.toLowerCase())
-      const matchesIndustry = activeIndustry === 'All' || org.industry === activeIndustry
-      return matchesQuery && matchesIndustry
-    })
-  }, [organizations, query, activeIndustry])
-
-  return { filtered, query, setQuery, activeIndustry, setActiveIndustry }
+  return {
+    filtered: data?.data ?? [],
+    query,
+    setQuery,
+    activeIndustry,
+    setActiveIndustry,
+    isLoading,
+    isError,
+  }
 }
