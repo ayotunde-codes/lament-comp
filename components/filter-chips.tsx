@@ -1,5 +1,5 @@
 import { INDUSTRIES } from '@/constants/industries'
-import type { Industry } from '@/types'
+import { INDUSTRY_LABELS, type Industry } from '@/types'
 
 interface FilterChipsProps {
   selected: Industry | 'All'
@@ -27,7 +27,7 @@ export default function FilterChips({ selected, onChange }: FilterChipsProps) {
               : 'bg-surface border border-border text-muted hover:border-accent hover:text-primary'
           }`}
         >
-          {option}
+          {option === 'All' ? 'All' : INDUSTRY_LABELS[option]}
         </button>
       ))}
     </div>

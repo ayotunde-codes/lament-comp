@@ -9,7 +9,7 @@ export function useSort(reviews: Review[]) {
   const sorted = useMemo(() => {
     const copy = [...reviews]
     if (sortOrder === 'Latest')
-      return copy.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      return copy.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     if (sortOrder === 'Top')
       return copy.sort((a, b) => b.rating - a.rating || b.likes - a.likes)
     return copy.sort((a, b) => a.rating - b.rating)

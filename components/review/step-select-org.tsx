@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useOrganizations, useCreateOrganization } from '@/services/organizations/queries'
-import { Industry } from '@/types'
+import { Industry, INDUSTRY_LABELS } from '@/types'
 import type { ReviewFormData } from '@/hooks/use-review-flow'
 
 interface Props {
@@ -23,7 +23,7 @@ export default function StepSelectOrg({ formData, setField, onNext }: Props) {
   function handleAddOrg() {
     if (!newName.trim()) return
     createOrg.mutate(
-      { name: newName.trim(), industry: newIndustry, logo: '🏢' },
+      { name: newName.trim(), industry: newIndustry },
       {
         onSuccess: (org) => {
           setField('orgId', org.id)
@@ -59,7 +59,7 @@ export default function StepSelectOrg({ formData, setField, onNext }: Props) {
               formData.orgId === org.id ? 'border-accent bg-accent/10' : 'border-border bg-surface hover:border-accent/50'
             }`}
           >
-            <span className="w-8 h-8 rounded-lg bg-elevated flex items-center justify-center text-xs font-bold text-accent shrink-0">{org.logo}</span>
+            <span className="w-8 h-8 rounded-lg bg-elevated flex items-center justify-center text-xs font-bold text-accent shrink-0">{org.logo ?? org.name[0].toUpperCase()}</span>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-primary truncate">{org.name}</p>
               <p className="text-xs text-muted">{org.industry}</p>
@@ -87,7 +87,7 @@ export default function StepSelectOrg({ formData, setField, onNext }: Props) {
             onChange={e => setNewIndustry(e.target.value as Industry)}
             className="w-full bg-elevated border border-border rounded-lg px-3 py-2 text-sm text-primary outline-none focus:border-accent"
           >
-            {Object.values(Industry).map(i => <option key={i} value={i}>{i}</option>)}
+            {Object.values(Industry).map(i => <option key={i} value={i}>{INDUSTRY_LABELS[i]}</option>)}
           </select>
           <div className="flex gap-2">
             <button

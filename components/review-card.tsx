@@ -76,7 +76,7 @@ export default function ReviewCard({ review, orgName, hideOrgName = false }: Rev
         <div className="flex-1 flex items-start justify-between min-w-0 gap-2">
           <div className="min-w-0">
             <p className="text-sm font-semibold text-primary leading-tight truncate">{review.username}</p>
-            <p className="text-xs text-muted mt-0.5">{formatTimeAgo(review.timestamp)}</p>
+            <p className="text-xs text-muted mt-0.5">{formatTimeAgo(review.createdAt)}</p>
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
             {!hideOrgName && <span className="text-xs text-star font-medium">{orgName}</span>}

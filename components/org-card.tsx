@@ -27,7 +27,7 @@ export default function OrgCard({ org }: OrgCardProps) {
         style={{ backgroundColor: getLogoColor(org.id) }}
         aria-hidden="true"
       >
-        {org.logo}
+        {org.logo ?? org.name[0].toUpperCase()}
       </div>
       <div>
         <p className="text-primary font-semibold text-sm leading-snug">{org.name}</p>

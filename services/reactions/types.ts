@@ -5,7 +5,7 @@ export interface CreateReactionDto {
 }
 
 export interface ReactionResponse {
-  reviewId: string;
+  id: string;
   likes: number;
   dislikes: number;
 }
