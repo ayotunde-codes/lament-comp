@@ -22,11 +22,15 @@ export function useReviewsFeed(params?: FeedParams) {
   });
 }
 
-export function useOrgReviews(orgId: string, sort?: ListReviewsParams["sort"]) {
+export function useOrgReviews(
+  orgId: string,
+  sort?: ListReviewsParams["sort"],
+  tag?: string,
+) {
   return useInfiniteQuery({
-    queryKey: reviewKeys.byOrg(orgId, { sort }),
+    queryKey: reviewKeys.byOrg(orgId, { sort, tag }),
     queryFn: ({ pageParam }) =>
-      fetchReviewsByOrg(orgId, { sort, cursor: pageParam as string | undefined }),
+      fetchReviewsByOrg(orgId, { sort, tag, cursor: pageParam as string | undefined }),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
     enabled: !!orgId,
