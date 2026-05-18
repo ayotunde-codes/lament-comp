@@ -1,4 +1,6 @@
-export type ReactionType = "LIKE" | "DISLIKE";
+import type { ReactionCounts, ReactionType } from "@/types";
+
+export type { ReactionType };
 
 export interface CreateReactionDto {
   type: ReactionType;
@@ -6,6 +8,5 @@ export interface CreateReactionDto {
 
 export interface ReactionResponse {
   id: string;
-  likes: number;
-  dislikes: number;
+  reactionCounts: ReactionCounts;
 }

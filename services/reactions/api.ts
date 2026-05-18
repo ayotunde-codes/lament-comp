@@ -11,8 +11,8 @@ export function reactToReview(
   ) as unknown as Promise<ReactionResponse>;
 }
 
-export function undoReaction(reviewId: string): Promise<void> {
+export function undoReaction(reviewId: string): Promise<ReactionResponse> {
   return apiClient.delete(
     `/reviews/${reviewId}/react`
-  ) as unknown as Promise<void>;
+  ) as unknown as Promise<ReactionResponse>;
 }

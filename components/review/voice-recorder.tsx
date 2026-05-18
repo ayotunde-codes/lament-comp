@@ -53,7 +53,7 @@ export default function VoiceRecorder({ voiceUrl, onRecorded }: Props) {
   if (isUploading) {
     return (
       <div className="flex items-center gap-3 bg-elevated border border-border rounded-xl px-4 py-3">
-        <span className="text-sm text-muted">Uploading voice note…</span>
+        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">Steeping voice note…</span>
       </div>
     )
   }
@@ -63,7 +63,7 @@ export default function VoiceRecorder({ voiceUrl, onRecorded }: Props) {
       <div className="flex items-center gap-3 bg-elevated border border-border rounded-xl px-4 py-3">
         <audio controls src={voiceUrl} className="flex-1 h-8" />
         <button onClick={() => onRecorded('')} className="text-xs text-muted hover:text-danger transition-colors shrink-0">
-          Remove
+          Discard
         </button>
       </div>
     )
@@ -77,9 +77,9 @@ export default function VoiceRecorder({ voiceUrl, onRecorded }: Props) {
             <div key={i} className="w-0.5 bg-accent rounded-full animate-pulse" style={{ height: `${h}px`, animationDelay: `${i * 60}ms` }} />
           ))}
         </div>
-        <span className="text-sm text-muted font-mono tabular-nums">{fmt(elapsed)}</span>
-        <button onClick={stop} className="ml-auto bg-accent text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-accent-hover transition-colors shrink-0">
-          Stop Recording
+        <span className="font-mono text-sm text-primary tabular-nums">{fmt(elapsed)}</span>
+        <button onClick={stop} className="ml-auto bg-accent text-canvas text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-accent-hover transition-colors shrink-0">
+          Stop
         </button>
       </div>
     )
@@ -95,7 +95,7 @@ export default function VoiceRecorder({ voiceUrl, onRecorded }: Props) {
       </span>
       <div>
         <p className="text-sm text-primary">Tap to record</p>
-        <p className="text-xs text-muted">Voice will be modified for anonymity</p>
+        <p className="text-xs text-muted">Your voice gets blurred — even your old roommate wouldn&apos;t know.</p>
       </div>
     </button>
   )

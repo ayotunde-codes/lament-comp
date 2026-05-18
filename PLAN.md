@@ -1,4 +1,14 @@
-# Lament — Build Plan
+# Build Plan — historical (v1, "Lament — Dark Minimal")
+
+> **Superseded.** This is the original v1 plan. The brand has since shipped as **Cooperate Tea** with the **Warm Disclosure** identity (Matcha-led palette, Fraunces + Inter typography). For current direction see the workspace root:
+>
+> - `DESIGN-DIRECTION.md` — strategy, tokens, roadmap
+> - `VERBIAGE.md` — copy system
+> - `mockups.html` — visual mockups
+>
+> The v1 plan below is preserved as a record of the MVP build.
+
+---
 
 **Design style:** Dark Minimal (deep dark navy background, purple/violet primary accent, white text, yellow star ratings)
 **Stack:** Next.js 16 · React 19 · TypeScript · Tailwind v4 · App Router

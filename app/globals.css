@@ -1,25 +1,32 @@
 @import "tailwindcss";
 
 @theme {
-  --color-canvas: #0A0A14;
-  --color-surface: #111126;
-  --color-elevated: #1A1A30;
-  --color-accent: #7C3AED;
-  --color-accent-hover: #6D28D9;
-  --color-primary: #FFFFFF;
-  --color-muted: #8B8BA7;
-  --color-star: #F59E0B;
-  --color-positive: #10B981;
-  --color-danger: #EF4444;
-  --color-border: #2A2A45;
+  /* Warm Disclosure — Cooperate Tea brand v2 (Matcha-led) */
+  --color-canvas: #0E0B07;          /* Midnight Brew — page background */
+  --color-surface: #1C1612;         /* Dark Roast — cards */
+  --color-elevated: #2A211B;        /* Warm Espresso — elevated cards / hovers */
+  --color-accent: #6FA88E;          /* Bright Matcha — buttons, active states, links */
+  --color-accent-hover: #82B89E;    /* Lighter matcha for hover */
+  --color-primary: #F5EBDA;         /* Cream — primary text (class-name kept for stability) */
+  --color-muted: #A89886;           /* Steam — secondary text */
+  --color-star: #6FA88E;            /* Matcha — stars (shared with accent) */
+  --color-positive: #6FA88E;        /* Matcha — positive feedback */
+  --color-danger: #C7763E;          /* Warm terracotta — distinct from accent, never alarming */
+  --color-border: #3A2E25;          /* Warm hairline */
 }
 
 @theme inline {
-  --font-sans: var(--font-geist-sans), Arial, Helvetica, sans-serif;
-  --font-mono: var(--font-geist-mono), monospace;
+  --font-sans: var(--font-sans), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
+  --font-display: var(--font-display), Georgia, serif;
 }
 
 body {
-  background-color: #0A0A14;
-  color: #FFFFFF;
+  background-color: #0E0B07;
+  color: #F5EBDA;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
+
+/* tabular figures for counts so they don't jiggle */
+.tabular-nums { font-variant-numeric: tabular-nums; }

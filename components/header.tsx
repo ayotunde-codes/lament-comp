@@ -12,8 +12,8 @@ function BellIcon() {
 export default function Header() {
   return (
     <header className="md:hidden sticky top-0 z-40 flex items-center justify-between h-14 px-4 bg-canvas border-b border-border">
-      <Link href="/" className="text-lg font-bold text-accent tracking-tight">
-        Lament
+      <Link href="/" className="font-display text-xl font-semibold text-primary tracking-tight leading-none">
+        Cooperate <em className="not-italic text-accent">Tea</em>
       </Link>
       <button
         type="button"

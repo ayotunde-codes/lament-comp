@@ -11,8 +11,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const org = await fetchOrganizationById(id)
     return {
-      title: `${org.name} Reviews — Lament`,
-      description: `Anonymous employee reviews for ${org.name}. Read honest opinions about culture, pay, and management.`,
+      title: `${org.name} — Cooperate Tea`,
+      description: `Anonymous spills from people who worked at ${org.name}. Honest takes on culture, pay, and management.`,
     }
   } catch {
     return {}

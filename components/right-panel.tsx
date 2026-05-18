@@ -18,17 +18,17 @@ function OrgRow({ org, rank }: { org: Organization; rank: number }) {
       href={`/organizations/${org.id}`}
       className="flex items-center gap-3 py-2.5 px-2 -mx-2 rounded-lg hover:bg-elevated transition-colors"
     >
-      <span className="text-xs text-muted w-4 text-center shrink-0">{rank}</span>
-      <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-elevated text-xs font-bold text-primary border border-border shrink-0">
+      <span className="font-mono text-[10px] text-muted w-4 text-center shrink-0">{String(rank).padStart(2, '0')}</span>
+      <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-elevated text-xs font-bold text-accent border border-border shrink-0">
         {org.logo}
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-primary truncate">{org.name}</p>
-        <p className="text-xs text-muted">{org.industry}</p>
+        <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted">{org.industry}</p>
       </div>
       <div className="flex items-center gap-1 text-star shrink-0">
         <StarIcon />
-        <span className="text-xs font-medium">{org.averageRating}</span>
+        <span className="text-xs font-semibold tabular-nums">{org.averageRating.toFixed(1)}</span>
       </div>
     </Link>
   )
@@ -39,8 +39,8 @@ export default function RightPanel() {
 
   return (
     <aside className="hidden xl:flex flex-col fixed right-0 top-0 h-screen w-[280px] bg-canvas border-l border-border z-40 px-4 py-6">
-      <h2 className="text-sm font-semibold text-primary mb-1">Top Organizations</h2>
-      <p className="text-xs text-muted mb-4">This week</p>
+      <h2 className="font-display text-lg font-semibold text-primary leading-tight">Hot Brews</h2>
+      <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted mt-1 mb-4">This week</p>
       <div className="flex flex-col">
         {topOrgs.slice(0, 5).map((org, i) => (
           <OrgRow key={org.id} org={org} rank={i + 1} />

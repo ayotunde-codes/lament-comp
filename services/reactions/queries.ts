@@ -3,31 +3,53 @@ import { reactToReview, undoReaction } from "./api";
 import { reviewKeys } from "@/services/reviews/queries";
 import type { ReactionType } from "./types";
 import type { CursorPage } from "@/services/reviews/types";
-import type { Review } from "@/types";
+import type { Review, ReactionCounts } from "@/types";
 
 interface ReactVariables {
   reviewId: string;
   type: ReactionType;
+  previousType: ReactionType | null;
+}
+
+interface UndoVariables {
+  reviewId: string;
+  previousType: ReactionType;
 }
 
 type ReviewCache = InfiniteData<CursorPage<Review>>;
 
+function applyDelta(counts: ReactionCounts, type: ReactionType, delta: number): ReactionCounts {
+  const next = { ...counts };
+  next[type] = Math.max(0, (next[type] ?? 0) + delta);
+  return next;
+}
+
 function patchReview(
   data: ReviewCache,
   reviewId: string,
-  delta: { likes?: number; dislikes?: number }
+  patch: (counts: ReactionCounts) => ReactionCounts
 ): ReviewCache {
   return {
     ...data,
     pages: data.pages.map((page) => ({
       ...page,
       data: page.data.map((r) =>
-        r.id === reviewId
-          ? { ...r, likes: r.likes + (delta.likes ?? 0), dislikes: r.dislikes + (delta.dislikes ?? 0) }
-          : r
+        r.id === reviewId ? { ...r, reactionCounts: patch(r.reactionCounts) } : r
       ),
     })),
   };
+}
+
+function patchAllCaches(
+  queryClient: ReturnType<typeof useQueryClient>,
+  reviewId: string,
+  patch: (counts: ReactionCounts) => ReactionCounts
+) {
+  const snapshots = queryClient.getQueriesData<ReviewCache>({ queryKey: reviewKeys.all });
+  for (const [key, data] of snapshots) {
+    if (data) queryClient.setQueryData(key, patchReview(data, reviewId, patch));
+  }
+  return snapshots;
 }
 
 export function useReactToReview() {
@@ -35,13 +57,14 @@ export function useReactToReview() {
   return useMutation({
     mutationFn: ({ reviewId, type }: ReactVariables) =>
       reactToReview(reviewId, { type }),
-    onMutate: async ({ reviewId, type }) => {
+    onMutate: async ({ reviewId, type, previousType }) => {
       await queryClient.cancelQueries({ queryKey: reviewKeys.all });
-      const snapshots = queryClient.getQueriesData<ReviewCache>({ queryKey: reviewKeys.all });
-      const delta = type === "LIKE" ? { likes: 1 } : { dislikes: 1 };
-      for (const [key, data] of snapshots) {
-        if (data) queryClient.setQueryData(key, patchReview(data, reviewId, delta));
-      }
+      const snapshots = patchAllCaches(queryClient, reviewId, (counts) => {
+        let next = counts;
+        if (previousType && previousType !== type) next = applyDelta(next, previousType, -1);
+        if (previousType !== type) next = applyDelta(next, type, +1);
+        return next;
+      });
       return { snapshots };
     },
     onError: (_err, _vars, context) => {
@@ -58,14 +81,12 @@ export function useReactToReview() {
 export function useUndoReaction() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ reviewId }: ReactVariables) => undoReaction(reviewId),
-    onMutate: async ({ reviewId, type }) => {
+    mutationFn: ({ reviewId }: UndoVariables) => undoReaction(reviewId),
+    onMutate: async ({ reviewId, previousType }) => {
       await queryClient.cancelQueries({ queryKey: reviewKeys.all });
-      const snapshots = queryClient.getQueriesData<ReviewCache>({ queryKey: reviewKeys.all });
-      const delta = type === "LIKE" ? { likes: -1 } : { dislikes: -1 };
-      for (const [key, data] of snapshots) {
-        if (data) queryClient.setQueryData(key, patchReview(data, reviewId, delta));
-      }
+      const snapshots = patchAllCaches(queryClient, reviewId, (counts) =>
+        applyDelta(counts, previousType, -1)
+      );
       return { snapshots };
     },
     onError: (_err, _vars, context) => {

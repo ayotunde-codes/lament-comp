@@ -23,7 +23,7 @@ export default function FilterChips({ selected, onChange }: FilterChipsProps) {
           aria-pressed={selected === option}
           className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
             selected === option
-              ? 'bg-accent text-white'
+              ? 'bg-accent text-canvas'
               : 'bg-surface border border-border text-muted hover:border-accent hover:text-primary'
           }`}
         >

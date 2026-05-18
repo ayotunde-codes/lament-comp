@@ -1,16 +1,23 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useSyncExternalStore } from 'react'
+
+const QUERY = '(min-width: 768px)'
+
+function subscribe(notify: () => void): () => void {
+  if (typeof window === 'undefined') return () => {}
+  const mq = window.matchMedia(QUERY)
+  mq.addEventListener('change', notify)
+  return () => mq.removeEventListener('change', notify)
+}
+
+function getSnapshot(): boolean {
+  return window.matchMedia(QUERY).matches
+}
+
+function getServerSnapshot(): boolean {
+  return false
+}
 
 export function useIsDesktop(): boolean {
-  const [isDesktop, setIsDesktop] = useState(false)
-
-  useEffect(() => {
-    const mq = window.matchMedia('(min-width: 768px)')
-    setIsDesktop(mq.matches)
-    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [])
-
-  return isDesktop
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 }

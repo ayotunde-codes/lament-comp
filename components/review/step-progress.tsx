@@ -1,11 +1,17 @@
+import type { ReviewStep } from '@/hooks/use-review-flow'
+
 interface StepProgressProps {
-  step: number
-  total?: number
+  step: ReviewStep
   onBack: () => void
 }
 
-export default function StepProgress({ step, total = 5, onBack }: StepProgressProps) {
-  const pct = Math.round(((step - 1) / (total - 1)) * 100)
+const STEP_INDEX: Record<ReviewStep, number> = { compose: 1, seal: 2 }
+const STEP_LABEL: Record<ReviewStep, string> = { compose: 'Compose', seal: 'Seal' }
+const TOTAL = 2
+
+export default function StepProgress({ step, onBack }: StepProgressProps) {
+  const idx = STEP_INDEX[step]
+  const pct = Math.round(((idx - 1) / (TOTAL - 1)) * 100)
 
   return (
     <div className="flex flex-col gap-3">
@@ -24,7 +30,9 @@ export default function StepProgress({ step, total = 5, onBack }: StepProgressPr
           />
         </div>
       </div>
-      <p className="text-xs text-muted text-center">Step {step} of {total}</p>
+      <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted text-center tabular-nums">
+        Step {idx} of {TOTAL} · {STEP_LABEL[step]}
+      </p>
     </div>
   )
 }

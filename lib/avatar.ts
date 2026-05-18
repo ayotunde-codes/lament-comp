@@ -12,8 +12,9 @@ const AVATAR_STYLES: AvatarStyle[] = [
   'nebula', 'glitch', 'marble', 'beam', 'wireframe', 'halftone', 'isometric',
 ]
 
+// Warm Disclosure palette — matcha, terracotta, ochre, sage, dusty rose, copper.
 const AVATAR_COLORS = [
-  '#7C3AED', '#10B981', '#F59E0B', '#EF4444', '#3B82F6', '#EC4899',
+  '#6FA88E', '#C7763E', '#B5A06E', '#7FB89A', '#C58B7E', '#A88562',
 ]
 
 function hashString(str: string): number {

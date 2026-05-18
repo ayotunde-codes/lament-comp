@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import ReviewFlowContainer from '@/components/review/review-flow-container'
 
 export const metadata: Metadata = {
-  title: 'Write a Review — Lament',
-  description: 'Share your anonymous workplace experience.',
+  title: 'Drop a Spill — Cooperate Tea',
+  description: 'Share your anonymous workplace story. Sealed. No name. No trace.',
 }
 
 export default function ReviewPage() {

@@ -10,7 +10,7 @@ export default function OrganizationsPage() {
 
   return (
     <section className="py-6 flex flex-col gap-4">
-      <h1 className="text-xl font-semibold text-primary">Organizations</h1>
+      <h1 className="font-display text-2xl font-semibold text-primary tracking-tight leading-tight">Companies</h1>
       <SearchBar value={query} onChange={setQuery} />
       <FilterChips selected={activeIndustry} onChange={setActiveIndustry} />
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -19,10 +19,10 @@ export default function OrganizationsPage() {
         ))}
       </div>
       {filtered.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-center col-span-full">
-          <p className="text-4xl mb-3">🏢</p>
-          <p className="text-base font-medium text-primary">No organizations found</p>
-          <p className="text-sm text-muted mt-1">Try a different name or industry filter</p>
+        <div className="flex flex-col items-center justify-center py-20 text-center col-span-full gap-2">
+          <p className="text-4xl">🫖</p>
+          <p className="font-display text-lg font-semibold text-primary">Couldn&apos;t find that one.</p>
+          <p className="text-sm text-muted">Try a different name or industry.</p>
         </div>
       )}
     </section>

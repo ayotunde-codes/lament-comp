@@ -18,7 +18,7 @@ interface SearchBarProps {
   placeholder?: string
 }
 
-export default function SearchBar({ value, onChange, placeholder = 'Search organizations...' }: SearchBarProps) {
+export default function SearchBar({ value, onChange, placeholder = 'Find a company...' }: SearchBarProps) {
   return (
     <div className="relative flex items-center">
       <span className="absolute left-3 text-muted pointer-events-none">
@@ -30,7 +30,7 @@ export default function SearchBar({ value, onChange, placeholder = 'Search organ
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
         className="w-full bg-surface border border-border rounded-xl pl-10 pr-10 py-2.5 text-sm text-primary placeholder:text-muted focus:outline-none focus:border-accent transition-colors"
-        aria-label="Search organizations"
+        aria-label="Find a company"
       />
       {value && (
         <button
