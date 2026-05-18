@@ -5,6 +5,7 @@ import type {
   ListOrganizationsParams,
   PaginatedOrganizations,
 } from "./types";
+import type { VibeCheck } from "@/types";
 
 export function fetchOrganizations(
   params?: ListOrganizationsParams
@@ -18,6 +19,10 @@ export function fetchOrganizationById(id: string): Promise<Organization> {
 
 export function fetchTopOrganizations(): Promise<Organization[]> {
   return apiClient.get("/organizations/top") as unknown as Promise<Organization[]>;
+}
+
+export function fetchVibeChecks(orgId: string): Promise<VibeCheck[]> {
+  return apiClient.get(`/organizations/${orgId}/vibe-checks`) as unknown as Promise<VibeCheck[]>;
 }
 
 export function createOrganization(dto: CreateOrganizationDto): Promise<Organization> {

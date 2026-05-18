@@ -3,6 +3,7 @@ import {
   fetchOrganizations,
   fetchOrganizationById,
   fetchTopOrganizations,
+  fetchVibeChecks,
   createOrganization,
 } from "./api";
 import type { ListOrganizationsParams, CreateOrganizationDto } from "./types";
@@ -13,6 +14,7 @@ export const orgKeys = {
     [...orgKeys.all, "list", params] as const,
   detail: (id: string) => [...orgKeys.all, "detail", id] as const,
   top: () => [...orgKeys.all, "top"] as const,
+  vibeChecks: (id: string) => [...orgKeys.all, "vibe-checks", id] as const,
 };
 
 export function useOrganizations(params?: ListOrganizationsParams) {
@@ -34,6 +36,17 @@ export function useTopOrganizations() {
   return useQuery({
     queryKey: orgKeys.top(),
     queryFn: fetchTopOrganizations,
+    // Guard against a mis-configured API URL returning HTML instead of JSON
+    select: (data) => (Array.isArray(data) ? data : []),
+  });
+}
+
+export function useVibeChecks(orgId: string) {
+  return useQuery({
+    queryKey: orgKeys.vibeChecks(orgId),
+    queryFn: () => fetchVibeChecks(orgId),
+    enabled: !!orgId,
+    select: (data) => (Array.isArray(data) ? data : []),
   });
 }
 
