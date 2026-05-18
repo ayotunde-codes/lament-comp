@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { motion } from 'framer-motion'
 
 function HomeIcon() {
   return (
@@ -34,8 +35,8 @@ function GridIcon() {
 
 const NAV_ITEMS = [
   { href: '/', label: 'Home', Icon: HomeIcon },
-  { href: '/review', label: 'Review', Icon: PenIcon },
-  { href: '/organizations', label: 'Orgs', Icon: GridIcon },
+  { href: '/review', label: 'Spill', Icon: PenIcon },
+  { href: '/organizations', label: 'Companies', Icon: GridIcon },
 ] as const
 
 export default function BottomNav() {
@@ -53,13 +54,26 @@ export default function BottomNav() {
           <Link
             key={href}
             href={href}
-            className={`flex flex-1 flex-col items-center gap-1 py-3 text-xs font-medium transition-colors ${
-              active ? 'text-accent' : 'text-muted hover:text-primary'
-            }`}
+            className="relative flex flex-1 flex-col items-center gap-1 py-3 text-xs font-medium"
             aria-current={active ? 'page' : undefined}
           >
-            <Icon />
-            <span>{label}</span>
+            {/* Sliding active dot indicator */}
+            {active && (
+              <motion.span
+                layoutId="bottom-nav-indicator"
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-accent"
+                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+              />
+            )}
+            <motion.span
+              animate={{ color: active ? 'var(--color-accent)' : 'var(--color-muted)' }}
+              transition={{ duration: 0.15 }}
+              whileTap={{ scale: 0.85 }}
+              className="flex flex-col items-center gap-1"
+            >
+              <Icon />
+              <span>{label}</span>
+            </motion.span>
           </Link>
         )
       })}

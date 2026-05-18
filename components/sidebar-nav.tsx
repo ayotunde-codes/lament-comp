@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { motion } from 'framer-motion'
 
 function HomeIcon() {
   return (
@@ -40,8 +41,8 @@ function ShieldIcon() {
 
 const NAV_ITEMS = [
   { href: '/', label: 'Home', Icon: HomeIcon },
-  { href: '/organizations', label: 'Organizations', Icon: BuildingsIcon },
-  { href: '/review', label: 'Write a Review', Icon: PenIcon },
+  { href: '/organizations', label: 'Companies', Icon: BuildingsIcon },
+  { href: '/review', label: 'Drop a Spill', Icon: PenIcon },
 ] as const
 
 export default function SidebarNav() {
@@ -49,8 +50,13 @@ export default function SidebarNav() {
 
   return (
     <aside className="hidden md:flex flex-col fixed left-0 top-0 h-screen w-[220px] bg-canvas border-r border-border z-40 px-4 py-6">
-      <Link href="/" className="text-xl font-bold text-accent tracking-tight mb-8 block">
-        Lament
+      <Link href="/" className="mb-8 block leading-none">
+        <span className="font-display text-2xl font-semibold text-primary tracking-tight">
+          Cooperate <em className="not-italic text-accent">Tea</em>
+        </span>
+        <span className="block font-mono text-[10px] uppercase tracking-[0.18em] text-muted mt-1.5">
+          The anonymous voice
+        </span>
       </Link>
 
       <nav aria-label="Sidebar navigation" className="flex flex-col gap-1 flex-1">
@@ -60,23 +66,35 @@ export default function SidebarNav() {
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors border-l-2 ${
-                active
-                  ? 'border-accent text-accent bg-accent/10'
-                  : 'border-transparent text-muted hover:text-primary hover:bg-elevated'
-              }`}
+              className="relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium"
               aria-current={active ? 'page' : undefined}
             >
-              <Icon />
-              {label}
+              {/* Sliding background pill */}
+              {active && (
+                <motion.span
+                  layoutId="sidebar-nav-active"
+                  className="absolute inset-0 rounded-lg bg-accent/10 border-l-2 border-accent"
+                  transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+                />
+              )}
+              <motion.span
+                animate={{ color: active ? 'var(--color-accent)' : 'var(--color-muted)' }}
+                whileHover={{ color: active ? 'var(--color-accent)' : 'var(--color-primary)' }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ duration: 0.15 }}
+                className="relative flex items-center gap-3 z-10"
+              >
+                <Icon />
+                {label}
+              </motion.span>
             </Link>
           )
         })}
       </nav>
 
-      <div className="flex items-center gap-2 text-xs text-muted border border-border rounded-full px-3 py-2">
+      <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-muted border border-border rounded-full px-3 py-2">
         <ShieldIcon />
-        <span>100% Anonymous</span>
+        <span>Sealed &amp; anonymous</span>
       </div>
     </aside>
   )
